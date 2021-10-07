@@ -1,0 +1,22 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t vc/frontend_dev -f Dockerfile.dev .
+
+script:
+  - docker run -e CI=true --name frontend_container vc/frontend_dev npm run test
+
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+  region: "us-east-1"
+  app: "frontend_react"
+  env: "Frontendreact-env-vc"
+  bucket_name: "elasticbeanstalk-us-east-1-547310065128"
+  bucket_path: "frontend_react"
+  on:
+    branch: master
